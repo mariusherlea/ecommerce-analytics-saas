@@ -18,6 +18,7 @@ model User {
   name               String?
   email              String   @unique
   password           String?
+  role               String   @default("user")
   stripeCustomerId   String?
   subscriptionStatus String?  @default("free")
   createdAt          DateTime @default(now())
