@@ -1,36 +1,225 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📊 StorePulse — eCommerce Analytics SaaS
 
-## Getting Started
+**StorePulse** is a full-stack SaaS analytics platform that helps online store owners monitor performance, revenue, and customer activity through a modern dashboard.
 
-First, run the development server:
+Built with a production-ready architecture using the latest web technologies.
+
+---
+
+## 🚀 Live Features
+
+### 🔐 Authentication
+
+* Secure email & password authentication
+* User registration & login
+* Protected dashboard routes
+* JWT sessions
+* Role support
+
+### 📈 Analytics Dashboard
+
+* Real-time KPIs from database
+* Revenue tracking
+* Orders overview
+* Unique customers count
+* Average order value
+* Sales chart (weekly performance)
+* Top-selling products
+* Recent orders table
+
+### 🗄️ Database
+
+* PostgreSQL relational database
+* Prisma ORM
+* Typed database access
+* Seeded demo data
+* Production-ready schema
+
+### 🧱 Architecture
+
+* App Router (Next.js)
+* Server Components
+* API Routes
+* Auth.js (NextAuth v5)
+* Clean folder structure
+* Scalable SaaS foundation
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+* **Next.js 16**
+* **React 19**
+* **TypeScript**
+* **Tailwind CSS**
+* **Recharts**
+* **Lucide Icons**
+
+### Backend
+
+* **Next.js Server Actions & Route Handlers**
+* **Auth.js (NextAuth v5)**
+* **Prisma ORM**
+* **PostgreSQL**
+
+### Dev Tools
+
+* Prisma Studio
+* pgAdmin
+* tsx (TypeScript runner)
+
+---
+
+## 📂 Project Structure
+
+```
+src/
+ ├─ app/
+ │   ├─ api/
+ │   ├─ dashboard/
+ │   ├─ login/
+ │   ├─ register/
+ │   └─ layout.tsx
+ │
+ ├─ components/
+ │   ├─ dashboard/
+ │   └─ providers/
+ │
+ ├─ lib/
+ │   ├─ db.ts
+ │   └─ analytics.ts
+ │
+ └─ types/
+ 
+prisma/
+ ├─ schema.prisma
+ └─ seed.ts
+```
+
+---
+
+## ⚙️ Getting Started
+
+### 1️⃣ Clone repository
+
+```bash
+git clone https://github.com/yourusername/storepulse.git
+cd storepulse
+```
+
+### 2️⃣ Install dependencies
+
+```bash
+npm install
+```
+
+### 3️⃣ Setup environment variables
+
+Create a `.env` file:
+
+```env
+DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/ecommerce_analytics"
+AUTH_SECRET="your-secret"
+```
+
+---
+
+### 4️⃣ Setup database
+
+```bash
+npx prisma migrate dev
+```
+
+---
+
+### 5️⃣ Seed demo data
+
+```bash
+npx prisma db seed
+```
+
+Demo credentials:
+
+```
+Email: mario@example.com
+Password: 123456
+```
+
+---
+
+### 6️⃣ Run development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🧪 Demo Data
 
-To learn more about Next.js, take a look at the following resources:
+The seed script creates:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+* 👤 1 User
+* 🏬 1 Store
+* 📦 4 Products
+* 🧾 5 Orders
+* 🧩 Order Items with product relations
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 📸 Screenshots (optional)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+*Add dashboard screenshots here*
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🧠 Roadmap
+
+* [x] Authentication system
+* [x] Protected dashboard
+* [x] Real analytics from database
+* [x] KPI metrics engine
+* [ ] Date range filters
+* [ ] Multi-store support
+* [ ] Stripe subscriptions
+* [ ] CSV export
+* [ ] Webhooks & integrations
+
+---
+
+## 🎯 Use Cases
+
+* eCommerce performance tracking
+* SaaS dashboard template
+* Analytics product foundation
+* Portfolio full-stack project
+
+---
+
+## 🔒 Security
+
+* Password hashing with bcrypt
+* JWT sessions
+* Protected routes
+* Server-side data fetching
+
+---
+
+## 👨‍💻 Author
+
+Built by **Mario**
+Full-Stack Web Developer
+
+---
+
+## 📄 License
+
+MIT License — feel free to use and modify.
