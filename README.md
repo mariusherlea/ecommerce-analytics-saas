@@ -215,7 +215,7 @@ The seed script creates:
 
 ## 👨‍💻 Author
 
-Built by **Mario**
+Built by **Marius**
 Full-Stack Web Developer
 
 ---
