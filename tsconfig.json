@@ -3,32 +3,32 @@
     "module": "esnext",
     "target": "esnext",
     "types": [],
-
     "sourceMap": true,
     "declaration": false,
     "declarationMap": false,
-
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
-
     "strict": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "isolatedModules": true,
     "skipLibCheck": true,
-
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "noEmit": true,
     "incremental": true,
     "esModuleInterop": true,
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
-
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": [
+        "./src/*"
+      ]
     },
-
     "plugins": [
       {
         "name": "next"
@@ -41,7 +41,8 @@
     "**/*.ts",
     "**/*.tsx",
     "**/*.js",
-    "**/*.jsx"
+    "**/*.jsx",
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",

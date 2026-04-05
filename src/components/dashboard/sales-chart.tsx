@@ -47,7 +47,12 @@ export function SalesChart({ data }: SalesChartProps) {
               fontSize={12}
               tickFormatter={(value) => `$${value}`}
             />
-            <Tooltip formatter={(value: number) => [`$${value}`, "Revenue"]} />
+           <Tooltip
+  formatter={(value) => {
+    const amount = typeof value === "number" ? value : Number(value ?? 0);
+    return [`$${amount}`, "Revenue"];
+  }}
+/>
             <Line
               type="monotone"
               dataKey="revenue"
