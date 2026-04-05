@@ -1,3 +1,4 @@
+//auth.ts
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
@@ -11,6 +12,8 @@ const signInSchema = z.object({
 });
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  trustHost: true,
+  secret: process.env.AUTH_SECRET!,
   session: {
     strategy: "jwt",
   },
@@ -53,20 +56,30 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-   async jwt({ token, user }) {
-  if (user) {
-    if (user.id) {
-      token.id = user.id;
-    }
-    token.role = (user as { role?: string }).role ?? "user";
-  }
+    async jwt({ token, user }) {
+      if (user) {
+        if (typeof user.id === "string") {
+          token.sub = user.id;
+          token.id = user.id;
+        }
 
-  return token;
-},
+        token.role = (user as { role?: string }).role ?? "user";
+      }
+
+      return token;
+    },
+
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = typeof token.id === "string" ? token.id : "";
-        session.user.role = typeof token.role === "string" ? token.role : "user";
+        session.user.id =
+          typeof token.id === "string"
+            ? token.id
+            : typeof token.sub === "string"
+            ? token.sub
+            : "";
+
+        session.user.role =
+          typeof token.role === "string" ? token.role : "user";
       }
 
       return session;
