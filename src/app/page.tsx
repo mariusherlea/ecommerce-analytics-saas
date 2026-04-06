@@ -1,4 +1,5 @@
 //src/app/page.tsx
+import { Suspense } from "react";
 import LoginPageClient from "./login/LoginPageClient";
 
 export default function Home() {
@@ -35,7 +36,9 @@ Advanced reports</p>
         {/* RIGHT */}
         <section className="flex items-center justify-center">
           <div className="w-full max-w-md">
-            <LoginPageClient />
+            <Suspense fallback={<div className="h-[520px] w-full rounded-2xl border border-zinc-200 bg-white" />}>
+              <LoginPageClient />
+            </Suspense>
           </div>
         </section>
 
