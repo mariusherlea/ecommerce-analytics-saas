@@ -16,17 +16,23 @@ export function StatsCard({
   const isUp = trend === "up";
 
   return (
-    <div className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
-      <p className="text-sm text-zinc-500">{title}</p>
+    <div className="group rounded-2xl border border-zinc-800 bg-zinc-900 p-5 transition hover:border-zinc-700 hover:bg-zinc-800/70">
+      
+      {/* TITLE */}
+      <p className="text-sm font-medium text-zinc-400">{title}</p>
 
-      <div className="mt-3 flex items-end justify-between gap-3">
-        <p className="text-2xl font-bold text-zinc-900">{value}</p>
+      {/* VALUE + TREND */}
+      <div className="mt-4 flex items-center justify-between">
+        
+        <p className="text-3xl font-semibold tracking-tight text-white">
+          {value}
+        </p>
 
         <div
-          className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${
+          className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${
             isUp
-              ? "bg-green-100 text-green-700"
-              : "bg-red-100 text-red-700"
+              ? "bg-green-500/10 text-green-400"
+              : "bg-red-500/10 text-red-400"
           }`}
         >
           {isUp ? (
@@ -37,6 +43,11 @@ export function StatsCard({
           {change}
         </div>
       </div>
+
+      {/* SUBTLE FOOTER */}
+      <p className="mt-3 text-xs text-zinc-500">
+        Compared to last period
+      </p>
     </div>
   );
 }

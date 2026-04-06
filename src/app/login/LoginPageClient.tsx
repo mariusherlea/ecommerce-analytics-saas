@@ -1,3 +1,4 @@
+//scr/app/login/LoginPageClient.tsx
 "use client";
 
 import { FormEvent, useState } from "react";
@@ -28,7 +29,7 @@ export default function LoginPageClient() {
     setIsPending(false);
 
     if (result?.error) {
-      setError("Email sau parolă incorectă.");
+      setError("Incorrect email or password.");
       return;
     }
 
@@ -38,9 +39,9 @@ export default function LoginPageClient() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-zinc-50 px-4">
       <div className="w-full max-w-md rounded-2xl border border-zinc-200 bg-black p-8 shadow-sm">
-        <h1 className="text-2xl font-bold text-zinc-900">Autentificare</h1>
+        <h1 className="text-2xl font-bold text-zinc-900">Authentication</h1>
         <p className="mt-2 text-sm text-zinc-500">
-          Intră în contul tău pentru a accesa dashboard-ul.
+          Log in to your account to access the dashboard.
         </p>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
@@ -53,21 +54,21 @@ export default function LoginPageClient() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full rounded-xl border border-zinc-300 px-4 py-3 outline-none ring-0 placeholder:text-zinc-400 focus:border-zinc-900"
-              placeholder="mario@example.com"
+              placeholder="ion@gmail.com"
               required
             />
           </div>
 
           <div>
             <label className="mb-2 block text-sm font-medium text-zinc-700">
-              Parolă
+              Password
             </label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full rounded-xl border border-zinc-300 px-4 py-3 outline-none ring-0 placeholder:text-zinc-400 focus:border-zinc-900"
-              placeholder="******"
+              placeholder="123456"
               required
             />
           </div>
@@ -79,14 +80,13 @@ export default function LoginPageClient() {
             disabled={isPending}
             className="w-full rounded-xl bg-zinc-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-70"
           >
-            {isPending ? "Se autentifică..." : "Login"}
+            {isPending ? "Logging in..." : "Login"}
           </button>
         </form>
 
-        <p className="mt-4 text-sm text-zinc-500">
-          Nu ai cont?{" "}
-          <a href="/register" className="font-medium text-zinc-900">
-            Creează unul
+        <p className="mt-4 text-sm text-zinc-500">Dont have an account?{" "}
+          <a href="/register" className="font-medium text-blue-600">
+           Create one
           </a>
         </p>
       </div>

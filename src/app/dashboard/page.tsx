@@ -11,16 +11,19 @@ import {
 
 export default function DashboardPage() {
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen space-y-6 bg-black p-6 text-zinc-100">
+      
+      {/* HEADER */}
       <section>
-        <h2 className="text-2xl font-bold tracking-tight text-zinc-900">
+        <h2 className="text-2xl font-bold tracking-tight text-white">
           Overview
         </h2>
-        <p className="mt-1 text-sm text-zinc-500">
+        <p className="mt-1 text-sm text-zinc-400">
           Welcome back. Here is a quick summary of your store performance.
         </p>
       </section>
 
+      {/* STATS */}
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {stats.map((stat) => (
           <StatsCard
@@ -33,18 +36,26 @@ export default function DashboardPage() {
         ))}
       </section>
 
+      {/* CHART + TOP PRODUCTS */}
       <section className="grid gap-6 xl:grid-cols-3">
         <div className="xl:col-span-2">
-          <SalesChart data={salesData} />
+          <div className="xl:col-span-2">
+  <SalesChart data={salesData} />
+</div>
         </div>
 
         <div>
-          <TopProducts items={topProducts} />
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
+            <TopProducts items={topProducts} />
+          </div>
         </div>
       </section>
 
+      {/* RECENT ORDERS */}
       <section>
-        <RecentOrders items={recentOrders} />
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
+          <RecentOrders items={recentOrders} />
+        </div>
       </section>
     </div>
   );
