@@ -18,15 +18,14 @@ export default async function DashboardLayout({
     redirect("/login?callbackUrl=/dashboard");
   }
 
-  return (
-    <div className="min-h-screen bg-zinc-50 text-zinc-900">
-      <div className="flex min-h-screen">
-        <DashboardSidebar />
-        <div className="flex min-w-0 flex-1 flex-col">
-          <DashboardHeader />
-          <main className="flex-1 p-6">{children}</main>
-        </div>
-      </div>
+return (
+  <div className="flex min-h-screen bg-black">
+    <DashboardSidebar />
+
+    <div className="flex min-w-0 flex-1 flex-col bg-black">
+      <DashboardHeader />
+      <main className="flex-1 bg-black p-6">{children}</main>
     </div>
-  );
+  </div>
+);
 }

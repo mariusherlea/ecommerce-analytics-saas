@@ -4,7 +4,7 @@ import LoginPageClient from "./login/LoginPageClient";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-black px-4">
+    <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-black via-zinc-950 to-zinc-900 px-4">
       <div className="grid w-full max-w-6xl gap-8 md:grid-cols-2">
         
         {/* LEFT */}
