@@ -1,3 +1,5 @@
+import { ProductsTable } from "@/components/dashboard/products-table";
+import { products } from "@/data/mock/product";
 export default function ProductsPage() {
   return (
     <div className="w-full rounded-2xl border border-blue-500/20 bg-zinc-950 p-6 text-white shadow-[0_0_0_1px_rgba(59,130,246,0.08)]">
@@ -9,9 +11,9 @@ export default function ProductsPage() {
       </p>
 
       <div className="mt-6 rounded-xl border border-blue-500/10 bg-blue-500/5 p-4">
-        <p className="text-sm text-blue-300">
-          Products page in progress.
-        </p>
+        
+          <ProductsTable items={products} />;
+        
       </div>
     </div>
   );
