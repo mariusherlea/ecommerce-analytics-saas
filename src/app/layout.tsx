@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
-import "./globals.css";
 import { AuthSessionProvider } from "@/components/providers/session-provider";
 
 export const metadata: Metadata = {
   title: "StorePulse",
   description: "eCommerce analytics SaaS",
+  icons: {
+    icon: "/favicon.png",
+  },
 };
 
 export default function RootLayout({
