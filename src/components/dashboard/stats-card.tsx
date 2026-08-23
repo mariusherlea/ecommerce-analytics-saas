@@ -16,22 +16,20 @@ export function StatsCard({
   const isUp = trend === "up";
 
   return (
-    <div className="group rounded-2xl border border-zinc-800 bg-zinc-900 p-5 transition hover:border-zinc-700 hover:bg-zinc-800/70">
-      
-      {/* TITLE */}
-      <p className="text-sm font-medium text-zinc-400">{title}</p>
+    <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-5 text-white transition hover:border-zinc-700">
+      <p className="text-sm font-medium text-zinc-400">
+        {title}
+      </p>
 
-      {/* VALUE + TREND */}
-      <div className="mt-4 flex items-center justify-between">
-        
-        <p className="text-3xl font-semibold tracking-tight text-white">
+      <div className="mt-4 flex items-end justify-between gap-3">
+        <p className="text-3xl font-bold tracking-tight text-white">
           {value}
         </p>
 
         <div
-          className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${
+          className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${
             isUp
-              ? "bg-green-500/10 text-green-400"
+              ? "bg-emerald-500/10 text-emerald-400"
               : "bg-red-500/10 text-red-400"
           }`}
         >
@@ -40,13 +38,13 @@ export function StatsCard({
           ) : (
             <TrendingDown className="h-3.5 w-3.5" />
           )}
+
           {change}
         </div>
       </div>
 
-      {/* SUBTLE FOOTER */}
-      <p className="mt-3 text-xs text-zinc-500">
-        Compared to last period
+      <p className="mt-2 text-xs text-zinc-500">
+        Compared to previous 30 days
       </p>
     </div>
   );
