@@ -10,6 +10,7 @@ import { TopProducts } from "@/components/dashboard/top-products";
 import { getDashboardAnalytics } from "@/lib/analytics/dashboard";
 import { getOverviewStats } from "@/lib/analytics/overview";
 import { db } from "@/lib/db";
+import { getRevenueForecast } from "@/lib/analytics/forecast";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -44,6 +45,10 @@ export default async function DashboardPage() {
     </div>
   );
 }
+
+const forecast = await getRevenueForecast(store.id);
+
+console.log("FORECAST:", forecast);
 
   // Overview statistics
   const stats = await getOverviewStats(store.id);
