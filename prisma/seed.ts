@@ -291,102 +291,205 @@ async function main() {
     return products[0];
   }
 
-  /**
-   * Create 250 orders over the last 90 days.
+ /**
+ * Create orders over the last 90 days.
+ *
+ * The dataset intentionally contains:
+ * - a positive long-term trend
+ * - weekday seasonality
+ * - daily randomness
+ * - realistic order values
+ *
+ * This gives StorePulse useful data for:
+ * quantitative analytics, backtesting and forecasting.
+ */
+
+const orders: {
+  id: string;
+  customerEmail: string;
+}[] = [];
+
+let totalRevenue = 0;
+
+const today = new Date();
+
+today.setHours(0, 0, 0, 0);
+
+const startDate = new Date(today);
+
+startDate.setDate(
+  startDate.getDate() - 89
+);
+
+/*
+ * Weekday seasonality.
+ *
+ * Sunday = 0
+ * Monday = 1
+ * ...
+ * Saturday = 6
+ *
+ * Weekend and end-of-week activity is intentionally
+ * stronger so the forecasting model has a pattern
+ * to discover.
+ */
+const weekdayMultiplier: Record<
+  number,
+  number
+> = {
+  0: 1.05, // Sunday
+  1: 0.85, // Monday
+  2: 0.90, // Tuesday
+  3: 0.95, // Wednesday
+  4: 1.10, // Thursday
+  5: 1.15, // Friday
+  6: 1.25, // Saturday
+};
+
+/*
+ * Generate approximately 3–6 orders per day.
+ *
+ * This guarantees that every day has data,
+ * which is important for time-series analysis.
+ */
+let orderIndex = 0;
+
+for (let dayIndex = 0; dayIndex < 90; dayIndex++) {
+  const date = new Date(startDate);
+
+  date.setDate(
+    startDate.getDate() + dayIndex
+  );
+
+  const dayOfWeek = date.getDay();
+
+  const seasonality =
+    weekdayMultiplier[dayOfWeek];
+
+  /*
+   * Long-term growth.
+   *
+   * Revenue gradually increases over the
+   * 90-day period.
    */
-  const orders: {
-    id: string;
-    customerEmail: string;
-  }[] = [];
+  const progress = dayIndex / 89;
 
-  let totalRevenue = 0;
+  const growthFactor =
+    0.85 + progress * 0.30;
 
-  for (let i = 0; i < 250; i++) {
-    /**
-     * Distribution:
-     *
-     * Older dates -> fewer orders
-     * Recent dates -> more orders
-     *
-     * This creates a positive trend that we can later
-     * test with forecasting.
-     */
-    const progress = i / 249;
+  /*
+   * Daily demand randomness.
+   *
+   * Keeps the dataset from looking artificially
+   * perfect while preserving the overall pattern.
+   */
+  const dailyNoise =
+    0.85 + random() * 0.30;
 
-    const baseDaysAgo = Math.floor(90 - progress * 88);
+  /*
+   * Number of orders for this day.
+   */
+  const baseOrders = randomInt(3, 5);
 
-    /**
-     * Add some randomness around the date.
-     */
-    const dayVariation = randomInt(-2, 2);
+  const ordersToday = Math.max(
+    1,
+    Math.round(
+      baseOrders *
+        seasonality *
+        dailyNoise
+    )
+  );
 
-    const days = Math.max(
-      0,
-      Math.min(89, baseDaysAgo + dayVariation)
-    );
-
-    /**
-     * Weekends get slightly more activity.
-     */
-    const date = daysAgo(days);
-
-    const dayOfWeek = date.getDay();
-
-    let weekendMultiplier = 1;
-
-    if (dayOfWeek === 0 || dayOfWeek === 6) {
-      weekendMultiplier = 1.15;
-    }
-
-    /**
+  for (
+    let dailyOrder = 0;
+    dailyOrder < ordersToday;
+    dailyOrder++
+  ) {
+    /*
      * Determine customer.
      *
-     * First 100 orders guarantee that every customer
-     * appears at least once.
+     * The first customers are guaranteed to appear
+     * at least once.
      */
     const customer =
-      i < customers.length
-        ? customers[i]
-        : customers[randomInt(0, customers.length - 1)];
+      orderIndex < customers.length
+        ? customers[orderIndex]
+        : customers[
+            randomInt(
+              0,
+              customers.length - 1
+            )
+          ];
 
-    /**
-     * 1–3 items per order.
+    /*
+     * 1–3 products per order.
      */
     const itemCount = randomInt(1, 3);
 
-    const selectedProducts = new Set<string>();
+    const selectedProducts =
+      new Set<string>();
 
-    while (selectedProducts.size < itemCount) {
-      selectedProducts.add(pickProduct().id);
+    while (
+      selectedProducts.size <
+      itemCount
+    ) {
+      selectedProducts.add(
+        pickProduct().id
+      );
     }
 
-    const orderProducts = Array.from(selectedProducts).map(
-      (productId) => {
-        const product = products.find(
-          (item) => item.id === productId
-        )!;
+    const orderProducts =
+      Array.from(
+        selectedProducts
+      ).map((productId) => {
+        const product =
+          products.find(
+            (item) =>
+              item.id === productId
+          )!;
 
         return {
           product,
           quantity: randomInt(1, 3),
         };
-      }
-    );
+      });
 
-    /**
-     * Calculate real order total from products.
+    /*
+     * Base order value.
      */
-    const total = orderProducts.reduce(
-      (sum, item) => sum + Number(item.product.price) * item.quantity,
-      0
-    );
+    const baseTotal =
+      orderProducts.reduce(
+        (sum, item) =>
+          sum +
+          Number(item.product.price) *
+            item.quantity,
+        0
+      );
 
-    /**
+    /*
+     * Add realistic variation to order value.
+     */
+    const orderNoise =
+      0.90 + random() * 0.25;
+
+    const adjustedTotal =
+      Math.round(
+        baseTotal *
+          growthFactor *
+          orderNoise *
+          100
+      ) / 100;
+
+    /*
      * Order status distribution.
      */
     const statusRoll = random();
 
-    let status: "Paid" | "Shipped" | "Pending" | "Cancelled";
+    let status:
+      | "Paid"
+      | "Shipped"
+      | "Pending"
+      | "Cancelled";
 
     if (statusRoll < 0.65) {
       status = "Paid";
@@ -398,53 +501,75 @@ async function main() {
       status = "Cancelled";
     }
 
-    /**
-     * Cancelled orders shouldn't contribute to revenue.
+    /*
+     * Revenue excludes cancelled orders.
      */
     if (status !== "Cancelled") {
-      totalRevenue += total;
+      totalRevenue += adjustedTotal;
     }
 
-    /**
-     * Slightly increase order value over time.
-     * This gives forecasting algorithms something meaningful
-     * to detect.
+    /*
+     * Random time during the day.
      */
-    const growthFactor = 1 + progress * 0.18;
+    const orderDate = new Date(date);
 
-    const adjustedTotal =
-      Math.round(total * weekendMultiplier * growthFactor * 100) / 100;
+    orderDate.setHours(
+      randomInt(8, 20),
+      randomInt(0, 59),
+      randomInt(0, 59),
+      0
+    );
 
-    const order = await prisma.order.create({
-      data: {
-        externalOrderId: `SP-${String(1001 + i)}`,
-        customerEmail: customer.email,
-        total: adjustedTotal,
-        status,
-        storeId: store.id,
-        createdAt: date,
-      },
-    });
+    const order =
+      await prisma.order.create({
+        data: {
+          externalOrderId:
+            `SP-${String(
+              1001 + orderIndex
+            )}`,
+
+          customerEmail:
+            customer.email,
+
+          total: adjustedTotal,
+
+          status,
+
+          storeId: store.id,
+
+          createdAt: orderDate,
+        },
+      });
 
     orders.push({
       id: order.id,
-      customerEmail: customer.email,
+      customerEmail:
+        customer.email,
     });
 
-    /**
+    /*
      * Create order items.
-     *
-     * We keep item prices equal to the product price.
      */
     await prisma.orderItem.createMany({
-      data: orderProducts.map((item) => ({
-        orderId: order.id,
-        productId: item.product.id,
-        quantity: item.quantity,
-        price: Number(item.product.price),
-      })),
+      data: orderProducts.map(
+        (item) => ({
+          orderId: order.id,
+          productId:
+            item.product.id,
+          quantity:
+            item.quantity,
+          price:
+            Number(
+              item.product.price
+            ),
+        })
+      ),
     });
+
+    orderIndex++;
   }
+}
+
 
   /**
    * Final statistics
