@@ -6,6 +6,8 @@ import { RecentOrders } from "@/components/dashboard/recent-orders";
 import { SalesChart } from "@/components/dashboard/sales-chart";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { TopProducts } from "@/components/dashboard/top-products";
+import { ForecastSection } from "@/components/dashboard/forecast-section";
+import { ForecastChart } from "@/components/dashboard/forecast-chart";
 
 import { getDashboardAnalytics } from "@/lib/analytics/dashboard";
 import { getOverviewStats } from "@/lib/analytics/overview";
@@ -121,6 +123,9 @@ console.log("FORECAST:", forecast);
           <TopProducts items={analytics.topProducts} />
         </div>
       </section>
+
+      {/* ANALYTICS & FORECAST */}
+<ForecastSection forecast={forecast} />
 
       {/* RECENT ORDERS */}
       <section>
