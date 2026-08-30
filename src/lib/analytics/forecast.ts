@@ -40,8 +40,8 @@ export type RevenueForecast = {
   modelComparison: ForecastModelComparison;
 };
 
-function formatDate(date: Date) {
-  return date.toISOString().split("T")[0];
+function formatDate(date: Date): string {
+  return date.toISOString().slice(0, 10);
 }
 
 function addDays(date: Date, days: number) {
@@ -91,10 +91,16 @@ function linearRegression(values: number[]) {
   let numerator = 0;
   let denominator = 0;
 
-  for (let i = 0; i < n; i++) {
+  for (let i = 0; i < values.length; i++) {
+    const value = values[i];
+
+    if (value === undefined) {
+      continue;
+    }
+
     numerator +=
       (i - xMean) *
-      (values[i] - yMean);
+      (value - yMean);
 
     denominator +=
       (i - xMean) ** 2;
@@ -141,12 +147,17 @@ function calculateWeekdaySeasonality(
     new Array(7).fill(0);
 
   for (let i = 0; i < dates.length; i++) {
-    const weekday =
-      dates[i].getUTCDay();
+  const date = dates[i];
+  const revenue = revenues[i];
 
-    weekdayTotals[weekday] +=
-      revenues[i];
+  if (date === undefined || revenue === undefined) {
+    continue;
+  }
 
+  const weekday = date.getUTCDay();
+
+  weekdayTotals[weekday] += revenue;
+  
     weekdayCounts[weekday] += 1;
   }
 
@@ -241,13 +252,19 @@ function calculateMetrics(
     };
   }
 
-  const errors = actual.map(
-    (value, index) =>
-      Math.abs(
-        value - predicted[index]
-      )
-  );
+ const errors = actual.map(
+  (value, index) => {
+    const prediction = predicted[index];
 
+    if (prediction === undefined) {
+      return 0;
+    }
+
+    return Math.abs(
+      value - prediction
+    );
+  }
+);
   /*
    * MAE
    */
@@ -268,23 +285,25 @@ function calculateMetrics(
 
   const percentageErrors: number[] = [];
 
-  for (
-    let i = 0;
-    i < actual.length;
-    i++
-  ) {
-    if (actual[i] === 0) {
-      continue;
-    }
+for (let i = 0; i < actual.length; i++) {
+  const actualValue = actual[i];
+  const predictedValue = predicted[i];
 
-    percentageErrors.push(
-      Math.abs(
-        (actual[i] -
-          predicted[i]) /
-          actual[i]
-      )
-    );
+  if (
+    actualValue === undefined ||
+    predictedValue === undefined ||
+    actualValue === 0
+  ) {
+    continue;
   }
+
+  percentageErrors.push(
+    Math.abs(
+      (actualValue - predictedValue) /
+        actualValue
+    )
+  );
+}
 
   const mape =
     percentageErrors.length > 0
@@ -481,11 +500,17 @@ function backtestSeasonal(
               slope * x
           );
 
-        const seasonalIndex =
-          getSeasonalityIndex(
-            actualDates[index],
-            trainingSeasonality
-          );
+       const actualDate = actualDates[index];
+
+if (actualDate === undefined) {
+  return 0;
+}
+
+const seasonalIndex =
+  getSeasonalityIndex(
+    actualDate,
+    trainingSeasonality
+  );
 
         return Math.max(
           0,
@@ -741,11 +766,10 @@ export async function getRevenueForecast(
    * for model selection.
    */
 
-  const selectedModel =
-    seasonalMetrics.wape <
-    baselineMetrics.wape
-      ? "seasonal"
-      : "baseline";
+  const selectedModel: "baseline" | "seasonal" =
+  seasonalMetrics.mae < baselineMetrics.mae
+    ? "seasonal"
+    : "baseline";
 
   const modelComparison = {
     baseline:
