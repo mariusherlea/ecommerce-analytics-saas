@@ -19,6 +19,11 @@ const navItems = [
     icon: LayoutDashboard,
   },
   {
+    label: "Analytics",
+    href: "/dashboard/analytics",
+    icon: BarChart3,
+  },
+  {
     label: "Products",
     href: "/dashboard/products",
     icon: Package,

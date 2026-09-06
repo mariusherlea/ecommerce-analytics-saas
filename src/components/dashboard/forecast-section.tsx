@@ -16,17 +16,7 @@ export function ForecastSection({ forecast }: Props) {
 
   return (
     <section className="space-y-6">
-      {/* HEADER */}
-      <div>
-        <h2 className="text-xl font-semibold text-white">
-          Analytics & Forecast
-        </h2>
-
-        <p className="mt-1 text-sm text-zinc-400">
-          Revenue trends, seasonality, and future performance
-          predictions.
-        </p>
-      </div>
+     
 
       {/* FORECAST STATS */}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">

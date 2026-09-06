@@ -6,13 +6,12 @@ import { RecentOrders } from "@/components/dashboard/recent-orders";
 import { SalesChart } from "@/components/dashboard/sales-chart";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { TopProducts } from "@/components/dashboard/top-products";
-import { ForecastSection } from "@/components/dashboard/forecast-section";
-import { ForecastChart } from "@/components/dashboard/forecast-chart";
+
 
 import { getDashboardAnalytics } from "@/lib/analytics/dashboard";
 import { getOverviewStats } from "@/lib/analytics/overview";
 import { db } from "@/lib/db";
-import { getRevenueForecast } from "@/lib/analytics/forecast";
+
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -48,9 +47,9 @@ export default async function DashboardPage() {
   );
 }
 
-const forecast = await getRevenueForecast(store.id);
 
-console.log("FORECAST:", forecast);
+
+
 
   // Overview statistics
   const stats = await getOverviewStats(store.id);
@@ -124,8 +123,7 @@ console.log("FORECAST:", forecast);
         </div>
       </section>
 
-      {/* ANALYTICS & FORECAST */}
-<ForecastSection forecast={forecast} />
+  
 
       {/* RECENT ORDERS */}
       <section>
