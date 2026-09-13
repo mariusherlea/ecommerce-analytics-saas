@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 type ProductItem = {
   id: string;
@@ -90,7 +91,12 @@ export function ProductsTable({ items }: ProductsTableProps) {
         className="border-b border-zinc-800 transition hover:bg-zinc-900/60 last:border-b-0"
       >
         <td className="py-4">
-          <p className="font-medium text-white">{product.name}</p>
+          <Link
+  href={`/dashboard/products/${product.id}`}
+  className="font-medium text-white transition hover:text-blue-400"
+>
+  {product.name}
+</Link>
         </td>
 
         <td className="py-4 text-zinc-400">{product.sku}</td>

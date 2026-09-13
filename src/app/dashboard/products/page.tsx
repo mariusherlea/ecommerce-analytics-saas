@@ -43,7 +43,7 @@ export default async function ProductsPage() {
   });
 
   const items = products.map((product) => ({
-    id: product.sku ?? product.id,
+    id: product.id,
     name: product.name,
     sku: product.sku ?? "—",
     price: `$${product.price.toFixed(2)}`,
