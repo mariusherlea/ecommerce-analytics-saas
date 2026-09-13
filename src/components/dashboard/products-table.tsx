@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+
 type ProductItem = {
   id: string;
   name: string;
@@ -25,6 +29,19 @@ function getStatusClasses(status: ProductItem["status"]) {
 }
 
 export function ProductsTable({ items }: ProductsTableProps) {
+  const [search, setSearch] = useState("");
+
+  const filteredItems = items.filter((product) => {
+    const query = search.toLowerCase().trim();
+
+    if (!query) return true;
+
+    return (
+      product.name.toLowerCase().includes(query) ||
+      product.sku.toLowerCase().includes(query)
+    );
+  });
+
   return (
     <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6 shadow-[0_0_0_1px_rgba(255,255,255,0.02)]">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -36,17 +53,19 @@ export function ProductsTable({ items }: ProductsTableProps) {
         </div>
 
         <div className="flex flex-col gap-3 sm:flex-row">
-          <input
-            type="text"
-            placeholder="Search products..."
-            className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-2.5 text-sm text-white placeholder:text-zinc-500 outline-none focus:border-zinc-700 sm:w-64"
-          />
+         <input
+  type="text"
+  placeholder="Search products..."
+  value={search}
+  onChange={(e) => setSearch(e.target.value)}
+  className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-2.5 text-sm text-white placeholder:text-zinc-500 outline-none focus:border-zinc-700 sm:w-64"
+/>
 
           <button
             type="button"
             className="rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-black transition hover:bg-zinc-200"
           >
-            Add Product
+            Search
           </button>
         </div>
       </div>
@@ -64,38 +83,46 @@ export function ProductsTable({ items }: ProductsTableProps) {
           </thead>
 
           <tbody>
-            {items.map((product) => (
-              <tr
-                key={product.id}
-                className="border-b border-zinc-800 transition hover:bg-zinc-900/60 last:border-b-0"
-              >
-                <td className="py-4">
-                  <div>
-                    <p className="font-medium text-white">{product.name}</p>
-                   
-                  </div>
-                </td>
+  {filteredItems.length > 0 ? (
+    filteredItems.map((product) => (
+      <tr
+        key={product.id}
+        className="border-b border-zinc-800 transition hover:bg-zinc-900/60 last:border-b-0"
+      >
+        <td className="py-4">
+          <p className="font-medium text-white">{product.name}</p>
+        </td>
 
-                <td className="py-4 text-zinc-400">{product.sku}</td>
+        <td className="py-4 text-zinc-400">{product.sku}</td>
 
-                <td className="py-4 font-medium text-zinc-200">
-                  {product.price}
-                </td>
+        <td className="py-4 font-medium text-zinc-200">
+          {product.price}
+        </td>
 
-                <td className="py-4 text-zinc-400">{product.stock}</td>
+        <td className="py-4 text-zinc-400">{product.stock}</td>
 
-                <td className="py-4">
-                  <span
-                    className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${getStatusClasses(
-                      product.status
-                    )}`}
-                  >
-                    {product.status}
-                  </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
+        <td className="py-4">
+          <span
+            className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${getStatusClasses(
+              product.status
+            )}`}
+          >
+            {product.status}
+          </span>
+        </td>
+      </tr>
+    ))
+  ) : (
+    <tr>
+      <td
+        colSpan={5}
+        className="py-10 text-center text-sm text-zinc-500"
+      >
+        No products found.
+      </td>
+    </tr>
+  )}
+</tbody>
         </table>
       </div>
     </div>
