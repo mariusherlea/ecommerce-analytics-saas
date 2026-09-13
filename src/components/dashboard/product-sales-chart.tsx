@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   CartesianGrid,
   Line,
@@ -13,25 +14,47 @@ import {
 type ProductSalesDataItem = {
   date: string;
   revenue: number;
+  unitsSold: number;
 };
 
 type ProductSalesChartProps = {
   data: ProductSalesDataItem[];
 };
 
+type Metric = "revenue" | "unitsSold";
+
 export function ProductSalesChart({
   data,
 }: ProductSalesChartProps) {
+  const [metric, setMetric] = useState<Metric>("revenue");
+
+  const isRevenue = metric === "revenue";
+
   return (
     <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6 shadow-[0_0_0_1px_rgba(255,255,255,0.02)]">
-      <div>
-        <h2 className="text-lg font-semibold text-white">
-          Sales Performance
-        </h2>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h2 className="text-lg font-semibold text-white">
+            Sales Performance
+          </h2>
 
-        <p className="mt-1 text-sm text-zinc-400">
-          Revenue performance over the last 30 days.
-        </p>
+          <p className="mt-1 text-sm text-zinc-400">
+            {isRevenue
+              ? "Revenue performance over the last 30 days."
+              : "Units sold over the last 30 days."}
+          </p>
+        </div>
+
+        <select
+          value={metric}
+          onChange={(event) =>
+            setMetric(event.target.value as Metric)
+          }
+          className="rounded-xl border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm text-white outline-none focus:border-zinc-700"
+        >
+          <option value="revenue">Revenue</option>
+          <option value="unitsSold">Units Sold</option>
+        </select>
       </div>
 
       <div className="mt-6 h-[320px] min-h-[320px] w-full">
@@ -65,7 +88,9 @@ export function ProductSalesChart({
               tickLine={false}
               axisLine={false}
               tick={{ fill: "#a1a1aa", fontSize: 12 }}
-              tickFormatter={(value) => `$${value}`}
+              tickFormatter={(value) =>
+                isRevenue ? `$${value}` : value
+              }
             />
 
             <Tooltip
@@ -103,15 +128,17 @@ export function ProductSalesChart({
                     : Number(value ?? 0);
 
                 return [
-                  `$${amount.toFixed(2)}`,
-                  "Revenue",
+                  isRevenue
+                    ? `$${amount.toFixed(2)}`
+                    : amount.toLocaleString(),
+                  isRevenue ? "Revenue" : "Units Sold",
                 ];
               }}
             />
 
             <Line
               type="monotone"
-              dataKey="revenue"
+              dataKey={metric}
               stroke="#3b82f6"
               strokeWidth={3}
               dot={{

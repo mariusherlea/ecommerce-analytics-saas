@@ -78,30 +78,41 @@ export async function getProductAnalytics(
   );
 
   // Create all 30 days first so days without sales are included
-  const salesMap = new Map<string, number>();
+  const salesMap = new Map<
+    string,
+    {
+      revenue: number;
+      unitsSold: number;
+    }
+  >();
 
   for (let i = 0; i < 30; i++) {
     const date = new Date(startDate);
     date.setUTCDate(date.getUTCDate() + i);
 
-    salesMap.set(formatDate(date), 0);
+    salesMap.set(formatDate(date), {
+      revenue: 0,
+      unitsSold: 0,
+    });
   }
 
-  // Add product revenue for each day
+  // Add product revenue and units sold for each day
   for (const item of recentOrderItems) {
     const dateKey = formatDate(item.order.createdAt);
     const itemRevenue = item.quantity * item.price;
+    const current = salesMap.get(dateKey);
 
-    salesMap.set(
-      dateKey,
-      (salesMap.get(dateKey) ?? 0) + itemRevenue
-    );
+    if (current) {
+      current.revenue += itemRevenue;
+      current.unitsSold += item.quantity;
+    }
   }
 
   const salesData = Array.from(salesMap.entries()).map(
-    ([date, revenue]) => ({
+    ([date, values]) => ({
       date,
-      revenue: Number(revenue.toFixed(2)),
+      revenue: Number(values.revenue.toFixed(2)),
+      unitsSold: values.unitsSold,
     })
   );
 
