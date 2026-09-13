@@ -1,7 +1,7 @@
 type ProductItem = {
   id: string;
   name: string;
-  category: string;
+  sku: string;
   price: string;
   stock: number;
   status: "Active" | "Low Stock" | "Out of Stock";
@@ -56,7 +56,7 @@ export function ProductsTable({ items }: ProductsTableProps) {
           <thead>
             <tr className="border-b border-zinc-800 text-left text-zinc-500">
               <th className="pb-3 font-medium">Product</th>
-              <th className="pb-3 font-medium">Category</th>
+              <th className="pb-3 font-medium">SKU</th>
               <th className="pb-3 font-medium">Price</th>
               <th className="pb-3 font-medium">Stock</th>
               <th className="pb-3 font-medium">Status</th>
@@ -72,11 +72,11 @@ export function ProductsTable({ items }: ProductsTableProps) {
                 <td className="py-4">
                   <div>
                     <p className="font-medium text-white">{product.name}</p>
-                    <p className="mt-1 text-xs text-zinc-500">{product.id}</p>
+                   
                   </div>
                 </td>
 
-                <td className="py-4 text-zinc-400">{product.category}</td>
+                <td className="py-4 text-zinc-400">{product.sku}</td>
 
                 <td className="py-4 font-medium text-zinc-200">
                   {product.price}
