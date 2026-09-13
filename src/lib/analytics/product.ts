@@ -1,5 +1,9 @@
 import { db } from "@/lib/db";
 
+function formatDate(date: Date) {
+  return date.toISOString().slice(0, 10);
+}
+
 export async function getProductAnalytics(
   productId: string,
   storeId: string
@@ -62,6 +66,45 @@ export async function getProductAnalytics(
   const averageOrderValue =
     orderCount > 0 ? revenue / orderCount : 0;
 
+  // Last 30 days
+  const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+
+  const startDate = new Date(today);
+  startDate.setUTCDate(startDate.getUTCDate() - 29);
+
+  const recentOrderItems = orderItems.filter(
+    (item) => item.order.createdAt >= startDate
+  );
+
+  // Create all 30 days first so days without sales are included
+  const salesMap = new Map<string, number>();
+
+  for (let i = 0; i < 30; i++) {
+    const date = new Date(startDate);
+    date.setUTCDate(date.getUTCDate() + i);
+
+    salesMap.set(formatDate(date), 0);
+  }
+
+  // Add product revenue for each day
+  for (const item of recentOrderItems) {
+    const dateKey = formatDate(item.order.createdAt);
+    const itemRevenue = item.quantity * item.price;
+
+    salesMap.set(
+      dateKey,
+      (salesMap.get(dateKey) ?? 0) + itemRevenue
+    );
+  }
+
+  const salesData = Array.from(salesMap.entries()).map(
+    ([date, revenue]) => ({
+      date,
+      revenue: Number(revenue.toFixed(2)),
+    })
+  );
+
   return {
     product,
     metrics: {
@@ -70,5 +113,6 @@ export async function getProductAnalytics(
       orderCount,
       averageOrderValue,
     },
+    salesData,
   };
 }

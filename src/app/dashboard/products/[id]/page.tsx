@@ -3,6 +3,7 @@ import { redirect, notFound } from "next/navigation";
 
 import { getProductAnalytics } from "@/lib/analytics/product";
 import { db } from "@/lib/db";
+import { ProductSalesChart } from "@/components/dashboard/product-sales-chart";
 
 type ProductPageProps = {
   params: Promise<{
@@ -69,32 +70,70 @@ export default async function ProductPage({
         </div>
       </section>
 
-      {/* PRODUCT INFO */}
-      <section className="grid gap-4 sm:grid-cols-3">
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
-          <p className="text-sm text-zinc-500">Current Price</p>
+      {/* PERFORMANCE */}
+<section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+  <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+    <p className="text-sm text-zinc-500">Revenue</p>
 
-          <p className="mt-2 text-2xl font-semibold text-white">
-            ${product.price.toFixed(2)}
-          </p>
-        </div>
+    <p className="mt-2 text-2xl font-semibold text-white">
+      ${analytics.metrics.revenue.toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}
+    </p>
+  </div>
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
-          <p className="text-sm text-zinc-500">Stock</p>
+  <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+    <p className="text-sm text-zinc-500">Units Sold</p>
 
-          <p className="mt-2 text-2xl font-semibold text-white">
-            {product.stock}
-          </p>
-        </div>
+    <p className="mt-2 text-2xl font-semibold text-white">
+      {analytics.metrics.unitsSold.toLocaleString()}
+    </p>
+  </div>
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
-          <p className="text-sm text-zinc-500">Status</p>
+  <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+    <p className="text-sm text-zinc-500">Orders</p>
 
-          <p className="mt-2 text-2xl font-semibold text-white">
-            {status}
-          </p>
-        </div>
-      </section>
+    <p className="mt-2 text-2xl font-semibold text-white">
+      {analytics.metrics.orderCount.toLocaleString()}
+    </p>
+  </div>
+
+  <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+    <p className="text-sm text-zinc-500">Average Order Value</p>
+
+    <p className="mt-2 text-2xl font-semibold text-white">
+      ${analytics.metrics.averageOrderValue.toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}
+    </p>
+  </div>
+</section>
+<ProductSalesChart data={analytics.salesData} />
+
+{/* INVENTORY */}
+<section className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+  <h2 className="text-lg font-semibold text-white">
+    Inventory
+  </h2>
+
+  <div className="mt-4 grid gap-4 sm:grid-cols-2">
+    <div>
+      <p className="text-sm text-zinc-500">Current Stock</p>
+      <p className="mt-1 text-xl font-semibold text-white">
+        {product.stock.toLocaleString()}
+      </p>
+    </div>
+
+    <div>
+      <p className="text-sm text-zinc-500">Status</p>
+      <p className="mt-1 text-xl font-semibold text-white">
+        {status}
+      </p>
+    </div>
+  </div>
+</section>
     </div>
   );
 }
