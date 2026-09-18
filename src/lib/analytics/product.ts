@@ -1,3 +1,4 @@
+//sr/lib/analytics/product.ts
 import { db } from "@/lib/db";
 
 function formatDate(date: Date) {
@@ -49,6 +50,7 @@ export async function getProductAnalytics(
     },
   });
 
+  // All-time product metrics
   const unitsSold = orderItems.reduce(
     (total, item) => total + item.quantity,
     0
@@ -66,18 +68,79 @@ export async function getProductAnalytics(
   const averageOrderValue =
     orderCount > 0 ? revenue / orderCount : 0;
 
-  // Last 30 days
+  // Current and previous 30-day periods
   const today = new Date();
   today.setUTCHours(0, 0, 0, 0);
 
-  const startDate = new Date(today);
-  startDate.setUTCDate(startDate.getUTCDate() - 29);
-
-  const recentOrderItems = orderItems.filter(
-    (item) => item.order.createdAt >= startDate
+  const currentPeriodStart = new Date(today);
+  currentPeriodStart.setUTCDate(
+    currentPeriodStart.getUTCDate() - 29
   );
 
-  // Create all 30 days first so days without sales are included
+  const previousPeriodStart = new Date(currentPeriodStart);
+  previousPeriodStart.setUTCDate(
+    previousPeriodStart.getUTCDate() - 30
+  );
+
+  const previousPeriodEnd = new Date(currentPeriodStart);
+  previousPeriodEnd.setUTCMilliseconds(
+    previousPeriodEnd.getUTCMilliseconds() - 1
+  );
+
+  // Current 30-day period
+  const recentOrderItems = orderItems.filter(
+    (item) => item.order.createdAt >= currentPeriodStart
+  );
+
+  // Previous 30-day period
+  const previousOrderItems = orderItems.filter(
+    (item) =>
+      item.order.createdAt >= previousPeriodStart &&
+      item.order.createdAt <= previousPeriodEnd
+  );
+
+  // Current 30-day period metrics
+  const currentUnitsSold = recentOrderItems.reduce(
+    (total, item) => total + item.quantity,
+    0
+  );
+
+  const currentRevenue = recentOrderItems.reduce(
+    (total, item) => total + item.quantity * item.price,
+    0
+  );
+
+  const currentOrderCount = new Set(
+    recentOrderItems.map((item) => item.orderId)
+  ).size;
+
+  const currentAverageOrderValue =
+    currentOrderCount > 0
+      ? currentRevenue / currentOrderCount
+      : 0;
+
+  // Previous 30-day period metrics
+  const previousUnitsSold = previousOrderItems.reduce(
+    (total, item) => total + item.quantity,
+    0
+  );
+
+  const previousRevenue = previousOrderItems.reduce(
+    (total, item) => total + item.quantity * item.price,
+    0
+  );
+
+  const previousOrderCount = new Set(
+    previousOrderItems.map((item) => item.orderId)
+  ).size;
+
+  const previousAverageOrderValue =
+    previousOrderCount > 0
+      ? previousRevenue / previousOrderCount
+      : 0;
+
+
+  // Create all 30 current-period days
   const salesMap = new Map<
     string,
     {
@@ -87,7 +150,7 @@ export async function getProductAnalytics(
   >();
 
   for (let i = 0; i < 30; i++) {
-    const date = new Date(startDate);
+    const date = new Date(currentPeriodStart);
     date.setUTCDate(date.getUTCDate() + i);
 
     salesMap.set(formatDate(date), {
@@ -96,7 +159,7 @@ export async function getProductAnalytics(
     });
   }
 
-  // Add product revenue and units sold for each day
+  // Add revenue and units sold for each day
   for (const item of recentOrderItems) {
     const dateKey = formatDate(item.order.createdAt);
     const itemRevenue = item.quantity * item.price;
@@ -116,14 +179,33 @@ export async function getProductAnalytics(
     })
   );
 
-  return {
+   return {
     product,
+
+    // All-time metrics
     metrics: {
       revenue,
       unitsSold,
       orderCount,
       averageOrderValue,
     },
+
+    // Current 30-day period
+    currentPeriod: {
+      revenue: currentRevenue,
+      unitsSold: currentUnitsSold,
+      orderCount: currentOrderCount,
+      averageOrderValue: currentAverageOrderValue,
+    },
+
+    // Previous 30-day period
+    previousPeriod: {
+      revenue: previousRevenue,
+      unitsSold: previousUnitsSold,
+      orderCount: previousOrderCount,
+      averageOrderValue: previousAverageOrderValue,
+    },
+
     salesData,
   };
 }
