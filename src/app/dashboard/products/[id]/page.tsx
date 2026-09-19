@@ -338,6 +338,65 @@ const worstSalesDay =
   </div>
 </section>
 
+{/* STORE CONTRIBUTION */}
+<section className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+  <div>
+    <h2 className="text-lg font-semibold text-white">
+      Store Contribution
+    </h2>
+
+    <p className="mt-1 text-sm text-zinc-400">
+      This products contribution to store revenue over the last 30 days.
+    </p>
+  </div>
+
+  <div className="mt-6 grid gap-6 sm:grid-cols-3">
+    <div>
+      <p className="text-sm text-zinc-500">
+        Product Revenue
+      </p>
+
+      <p className="mt-1 text-xl font-semibold text-white">
+        $
+        {analytics.storeContribution.productRevenue.toLocaleString(
+          undefined,
+          {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }
+        )}
+      </p>
+    </div>
+
+    <div>
+      <p className="text-sm text-zinc-500">
+        Store Revenue
+      </p>
+
+      <p className="mt-1 text-xl font-semibold text-white">
+        $
+        {analytics.storeContribution.storeRevenue.toLocaleString(
+          undefined,
+          {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }
+        )}
+      </p>
+    </div>
+
+    <div>
+      <p className="text-sm text-zinc-500">
+        Revenue Contribution
+      </p>
+
+      <p className="mt-1 text-2xl font-semibold text-blue-400">
+        {analytics.storeContribution.revenuePercentage.toFixed(1)}%
+      </p>
+    </div>
+  </div>
+</section>
+
       {/* INVENTORY */}
       <section className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
         <h2 className="text-lg font-semibold text-white">

@@ -119,6 +119,30 @@ export async function getProductAnalytics(
       ? currentRevenue / currentOrderCount
       : 0;
 
+  // Store revenue for the current 30-day period
+  const storeCurrentPeriodRevenue = await db.order.aggregate({
+    where: {
+      storeId,
+      status: {
+        not: "Cancelled",
+      },
+      createdAt: {
+        gte: currentPeriodStart,
+      },
+    },
+    _sum: {
+      total: true,
+    },
+  });
+
+  const storeRevenue =
+    storeCurrentPeriodRevenue._sum.total ?? 0;
+
+  const revenueContribution =
+    storeRevenue > 0
+      ? (currentRevenue / storeRevenue) * 100
+      : 0;
+
   // Previous 30-day period metrics
   const previousUnitsSold = previousOrderItems.reduce(
     (total, item) => total + item.quantity,
@@ -197,6 +221,13 @@ export async function getProductAnalytics(
       orderCount: currentOrderCount,
       averageOrderValue: currentAverageOrderValue,
     },
+
+      storeContribution: {
+      storeRevenue,
+      productRevenue: currentRevenue,
+      revenuePercentage: revenueContribution,
+    },
+
 
     // Previous 30-day period
     previousPeriod: {
