@@ -143,6 +143,103 @@ export async function getProductAnalytics(
       ? (currentRevenue / storeRevenue) * 100
       : 0;
 
+        // Product ranking for the current 30-day period
+  const storeProducts = await db.product.findMany({
+    where: {
+      storeId,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  const storeOrderItems = await db.orderItem.findMany({
+    where: {
+      order: {
+        storeId,
+        status: {
+          not: "Cancelled",
+        },
+        createdAt: {
+          gte: currentPeriodStart,
+        },
+      },
+    },
+    select: {
+      productId: true,
+      quantity: true,
+      price: true,
+      orderId: true,
+    },
+  });
+
+  const productRankingMap = new Map<
+    string,
+    {
+      revenue: number;
+      unitsSold: number;
+      orderIds: Set<string>;
+    }
+  >();
+
+  for (const storeProduct of storeProducts) {
+    productRankingMap.set(storeProduct.id, {
+      revenue: 0,
+      unitsSold: 0,
+      orderIds: new Set(),
+    });
+  }
+
+  for (const item of storeOrderItems) {
+    const current = productRankingMap.get(item.productId);
+
+    if (!current) {
+      continue;
+    }
+
+    current.revenue += item.quantity * item.price;
+    current.unitsSold += item.quantity;
+    current.orderIds.add(item.orderId);
+  }
+
+  const rankedProducts = Array.from(
+    productRankingMap.entries()
+  ).map(([productId, values]) => ({
+    productId,
+    revenue: values.revenue,
+    unitsSold: values.unitsSold,
+    orderCount: values.orderIds.size,
+  }));
+
+  const revenueRanking = [...rankedProducts].sort(
+    (a, b) => b.revenue - a.revenue
+  );
+
+  const unitsRanking = [...rankedProducts].sort(
+    (a, b) => b.unitsSold - a.unitsSold
+  );
+
+  const ordersRanking = [...rankedProducts].sort(
+    (a, b) => b.orderCount - a.orderCount
+  );
+
+  const productCount = rankedProducts.length;
+
+  const revenueRank =
+    revenueRanking.findIndex(
+      (item) => item.productId === product.id
+    ) + 1;
+
+  const unitsSoldRank =
+    unitsRanking.findIndex(
+      (item) => item.productId === product.id
+    ) + 1;
+
+  const ordersRank =
+    ordersRanking.findIndex(
+      (item) => item.productId === product.id
+    ) + 1;
+
   // Previous 30-day period metrics
   const previousUnitsSold = previousOrderItems.reduce(
     (total, item) => total + item.quantity,
@@ -228,6 +325,12 @@ export async function getProductAnalytics(
       revenuePercentage: revenueContribution,
     },
 
+ productRanking: {
+      revenueRank,
+      unitsSoldRank,
+      ordersRank,
+      totalProducts: productCount,
+    },
 
     // Previous 30-day period
     previousPeriod: {

@@ -147,6 +147,12 @@ const worstSalesDay =
       )
     : null;
 
+    const averageDailySales = averageUnitsPerDay;
+
+const daysOfStock =
+  averageDailySales > 0
+    ? product.stock / averageDailySales
+    : null;
 
   return (
     <div className="w-full space-y-6">
@@ -397,34 +403,119 @@ const worstSalesDay =
   </div>
 </section>
 
-      {/* INVENTORY */}
-      <section className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
-        <h2 className="text-lg font-semibold text-white">
-          Inventory
-        </h2>
+{/* PRODUCT RANKING */}
+<section className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+  <div>
+    <h2 className="text-lg font-semibold text-white">
+      Product Ranking
+    </h2>
 
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <div>
-            <p className="text-sm text-zinc-500">
-              Current Stock
-            </p>
+    <p className="mt-1 text-sm text-zinc-400">
+      Product performance ranking over the last 30 days.
+    </p>
+  </div>
 
-            <p className="mt-1 text-xl font-semibold text-white">
-              {product.stock.toLocaleString()}
-            </p>
-          </div>
+  <div className="mt-6 grid gap-6 sm:grid-cols-3">
+    <div>
+      <p className="text-sm text-zinc-500">
+        Revenue Rank
+      </p>
 
-          <div>
-            <p className="text-sm text-zinc-500">
-              Status
-            </p>
+      <p className="mt-1 text-2xl font-semibold text-white">
+        #{analytics.productRanking.revenueRank}
+        <span className="ml-1 text-sm font-normal text-zinc-500">
+          of {analytics.productRanking.totalProducts}
+        </span>
+      </p>
+    </div>
 
-            <p className="mt-1 text-xl font-semibold text-white">
-              {status}
-            </p>
-          </div>
-        </div>
-      </section>
+    <div>
+      <p className="text-sm text-zinc-500">
+        Units Sold Rank
+      </p>
+
+      <p className="mt-1 text-2xl font-semibold text-white">
+        #{analytics.productRanking.unitsSoldRank}
+        <span className="ml-1 text-sm font-normal text-zinc-500">
+          of {analytics.productRanking.totalProducts}
+        </span>
+      </p>
+    </div>
+
+    <div>
+      <p className="text-sm text-zinc-500">
+        Orders Rank
+      </p>
+
+      <p className="mt-1 text-2xl font-semibold text-white">
+        #{analytics.productRanking.ordersRank}
+        <span className="ml-1 text-sm font-normal text-zinc-500">
+          of {analytics.productRanking.totalProducts}
+        </span>
+      </p>
+    </div>
+  </div>
+</section>
+
+    {/* INVENTORY */}
+<section className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+  <div>
+    <h2 className="text-lg font-semibold text-white">
+      Inventory
+    </h2>
+
+    <p className="mt-1 text-sm text-zinc-400">
+      Inventory position based on recent sales velocity.
+    </p>
+  </div>
+
+  <div className="mt-6 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+    <div>
+      <p className="text-sm text-zinc-500">
+        Current Stock
+      </p>
+
+      <p className="mt-1 text-xl font-semibold text-white">
+        {product.stock.toLocaleString()}
+      </p>
+    </div>
+
+    <div>
+      <p className="text-sm text-zinc-500">
+        Status
+      </p>
+
+      <p className="mt-1 text-xl font-semibold text-white">
+        {status}
+      </p>
+    </div>
+
+    <div>
+      <p className="text-sm text-zinc-500">
+        Average Daily Sales
+      </p>
+
+      <p className="mt-1 text-xl font-semibold text-white">
+        {averageDailySales.toLocaleString(undefined, {
+          minimumFractionDigits: 1,
+          maximumFractionDigits: 1,
+        })}
+      </p>
+    </div>
+
+    <div>
+      <p className="text-sm text-zinc-500">
+        Days of Stock
+      </p>
+
+      <p className="mt-1 text-xl font-semibold text-white">
+        {daysOfStock !== null
+          ? `${Math.round(daysOfStock)} days`
+          : "No sales data"}
+      </p>
+    </div>
+  </div>
+</section>
     </div>
   );
 }
