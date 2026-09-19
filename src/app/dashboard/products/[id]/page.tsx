@@ -113,6 +113,41 @@ export default async function ProductPage({
     analytics.previousPeriod.averageOrderValue
   );
 
+const totalSalesDays = analytics.salesData.filter(
+  (day) => day.revenue > 0
+).length;
+
+const averageDailyRevenue =
+  analytics.salesData.length > 0
+    ? analytics.currentPeriod.revenue /
+      analytics.salesData.length
+    : 0;
+
+const averageUnitsPerDay =
+  analytics.salesData.length > 0
+    ? analytics.currentPeriod.unitsSold /
+      analytics.salesData.length
+    : 0;
+
+const salesDays = analytics.salesData.filter(
+  (day) => day.revenue > 0
+);
+
+const bestSalesDay =
+  analytics.salesData.length > 0
+    ? analytics.salesData.reduce((best, day) =>
+        day.revenue > best.revenue ? day : best
+      )
+    : null;
+
+const worstSalesDay =
+  salesDays.length > 0
+    ? salesDays.reduce((worst, day) =>
+        day.revenue < worst.revenue ? day : worst
+      )
+    : null;
+
+
   return (
     <div className="w-full space-y-6">
       {/* HEADER */}
@@ -199,6 +234,109 @@ export default async function ProductPage({
       </section>
 
       <ProductSalesChart data={analytics.salesData} />
+
+
+      {/* SALES SUMMARY */}
+<section className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+  <div>
+    <h2 className="text-lg font-semibold text-white">
+      Sales Summary
+    </h2>
+
+    <p className="mt-1 text-sm text-zinc-400">
+      Sales performance summary for the last 30 days.
+    </p>
+  </div>
+
+  <div className="mt-6 grid gap-6 sm:grid-cols-2 xl:grid-cols-5">
+    <div>
+      <p className="text-sm text-zinc-500">
+        Average Daily Revenue
+      </p>
+
+      <p className="mt-1 text-xl font-semibold text-white">
+        $
+        {averageDailyRevenue.toLocaleString(undefined, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}
+      </p>
+    </div>
+
+    <div>
+      <p className="text-sm text-zinc-500">
+        Average Units / Day
+      </p>
+
+      <p className="mt-1 text-xl font-semibold text-white">
+        {averageUnitsPerDay.toLocaleString(undefined, {
+          minimumFractionDigits: 1,
+          maximumFractionDigits: 1,
+        })}
+      </p>
+    </div>
+
+    <div>
+      <p className="text-sm text-zinc-500">
+        Best Sales Day
+      </p>
+
+      <p className="mt-1 text-xl font-semibold text-white">
+        {bestSalesDay
+          ? new Date(
+              `${bestSalesDay.date}T00:00:00`
+            ).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+            })
+          : "—"}
+      </p>
+
+      <p className="mt-1 text-xs text-zinc-500">
+        $
+        {bestSalesDay?.revenue.toLocaleString(undefined, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }) ?? "0.00"}
+      </p>
+    </div>
+
+    <div>
+      <p className="text-sm text-zinc-500">
+        Worst Sales Day
+      </p>
+
+      <p className="mt-1 text-xl font-semibold text-white">
+        {worstSalesDay
+          ? new Date(
+              `${worstSalesDay.date}T00:00:00`
+            ).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+            })
+          : "—"}
+      </p>
+
+      <p className="mt-1 text-xs text-zinc-500">
+        $
+        {worstSalesDay?.revenue.toLocaleString(undefined, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }) ?? "0.00"}
+      </p>
+    </div>
+
+    <div>
+      <p className="text-sm text-zinc-500">
+        Days With Sales
+      </p>
+
+      <p className="mt-1 text-xl font-semibold text-white">
+        {totalSalesDays} / 30
+      </p>
+    </div>
+  </div>
+</section>
 
       {/* INVENTORY */}
       <section className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
