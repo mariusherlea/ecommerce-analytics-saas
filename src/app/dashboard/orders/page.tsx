@@ -53,14 +53,36 @@ export default async function OrdersPage() {
     },
   });
 
+ 
   const items = orders.map((order) => ({
-    id: order.id,
-    externalOrderId: order.externalOrderId,
-    customerEmail: order.customerEmail,
-    total: order.total,
-    status: order.status,
-    createdAt: order.createdAt.toISOString(),
-  }));
+  id: order.id,
+  externalOrderId: order.externalOrderId,
+  customerEmail: order.customerEmail,
+  total: order.total,
+  status: order.status,
+  createdAt: order.createdAt.toISOString(),
+}));
+
+const activeOrders = orders.filter(
+  (order) => order.status !== "Cancelled"
+);
+
+const totalOrders = activeOrders.length;
+
+const totalRevenue = activeOrders.reduce(
+  (total, order) => total + order.total,
+  0
+);
+
+const averageOrderValue =
+  totalOrders > 0
+    ? totalRevenue / totalOrders
+    : 0;
+
+const cancelledOrders = orders.filter(
+  (order) => order.status === "Cancelled"
+).length;
+
 
   return (
     <div className="w-full rounded-2xl border border-blue-500/20 bg-zinc-950 p-6 text-white shadow-[0_0_0_1px_rgba(59,130,246,0.08)]">
@@ -72,9 +94,61 @@ export default async function OrdersPage() {
         Manage and monitor your store orders.
       </p>
 
-      <div className="mt-6">
-        <OrdersTable orders={items} />
-      </div>
+      <div className="mt-6 space-y-6">
+  {/* KPI CARDS */}
+  <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+      <p className="text-sm text-zinc-500">
+        Total Orders
+      </p>
+
+      <p className="mt-2 text-2xl font-semibold text-white">
+        {totalOrders.toLocaleString()}
+      </p>
+    </div>
+
+    <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+      <p className="text-sm text-zinc-500">
+        Revenue
+      </p>
+
+      <p className="mt-2 text-2xl font-semibold text-white">
+        $
+        {totalRevenue.toLocaleString(undefined, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}
+      </p>
+    </div>
+
+    <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+      <p className="text-sm text-zinc-500">
+        Average Order Value
+      </p>
+
+      <p className="mt-2 text-2xl font-semibold text-white">
+        $
+        {averageOrderValue.toLocaleString(undefined, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}
+      </p>
+    </div>
+
+    <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+      <p className="text-sm text-zinc-500">
+        Cancelled Orders
+      </p>
+
+      <p className="mt-2 text-2xl font-semibold text-white">
+        {cancelledOrders.toLocaleString()}
+      </p>
+    </div>
+  </div>
+
+  {/* ORDERS TABLE */}
+  <OrdersTable orders={items} />
+</div>
     </div>
   );
 }
