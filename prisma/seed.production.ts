@@ -234,7 +234,7 @@ async function main() {
     let value = random() * totalWeight;
 
     for (let i = 0; i < products.length; i++) {
-      value -= productWeights[i];
+      value -= productWeights[i]!;
 
       if (value <= 0) {
         return products[i];
@@ -279,7 +279,7 @@ async function main() {
     date.setDate(startDate.getDate() + dayIndex);
 
     const dayOfWeek = date.getDay();
-    const seasonality = weekdayMultiplier[dayOfWeek];
+    const seasonality = weekdayMultiplier[dayOfWeek]??1;
 
     // Positive long-term growth.
     const progress = dayIndex / 89;
@@ -299,13 +299,13 @@ async function main() {
       const customer =
         orderIndex < customers.length
           ? customers[orderIndex]
-          : customers[randomInt(0, customers.length - 1)];
+          : customers[randomInt(0, customers.length - 1)]!;
 
       const itemCount = randomInt(1, 3);
       const selectedProducts = new Set<string>();
 
       while (selectedProducts.size < itemCount) {
-        selectedProducts.add(pickProduct().id);
+        selectedProducts.add(pickProduct()!.id);
       }
 
       const orderProducts = Array.from(selectedProducts).map((productId) => {
