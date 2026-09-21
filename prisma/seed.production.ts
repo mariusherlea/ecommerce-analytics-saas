@@ -223,6 +223,8 @@ async function main() {
     return 2;
   });
 
+  
+
   function pickProduct() {
     const totalWeight = productWeights.reduce(
       (sum, weight) => sum + weight,
