@@ -364,7 +364,7 @@ async function main() {
       const order = await prisma.order.create({
         data: {
           externalOrderId: `SP-${String(1001 + orderIndex)}`,
-          customerEmail: customer.email,
+          customerEmail: customer!.email,
           total: adjustedTotal,
           status,
           storeId: store.id,
@@ -374,7 +374,7 @@ async function main() {
 
       orders.push({
         id: order.id,
-        customerEmail: customer.email,
+        customerEmail: customer!.email,
       });
 
       await prisma.orderItem.createMany({
